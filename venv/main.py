@@ -3,11 +3,18 @@ import struct
 import sys
 import time
 from Device import Device
+from Command import Command
 
 
 def main():
+
+    # Beispielhafte Nutzung eines Commands
+    test_command = Command(cmd_id=1, method="set_power", parameters=["on", "smooth", 500])
+    test_command.create_json()
+
+
     print("Suche wird gestartet.")
-    discoverd_devices = discover_devices(ssdp_adress="239.255.255.250", ssdp_port=1982)
+    # discoverd_devices = discover_devices(ssdp_adress="239.255.255.250", ssdp_port=1982)
     print("Suche abgeschlossen. Diese Geräte wurden entdeckt: ")
 
     if discoverd_devices is not None and len(discoverd_devices) > 0:
@@ -55,8 +62,6 @@ def discover_devices(ssdp_adress, ssdp_port):
 
             if device and device_is_unique(device, devices):
                 devices.append(device)
-
-            #print(device)
 
             if not answer:
                 break

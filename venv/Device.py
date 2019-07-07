@@ -1,4 +1,5 @@
 import socket
+from Command import Command
 
 class Device:
 
@@ -49,10 +50,11 @@ class Device:
         except Exception as ex:
             print(f"Fehler beim Schließen der TCP-Verbindung. Exception={ex}")
 
-    def send_command(self, id, method, params):
+    def send_command(self, command):
         try:
             sock = self.tcp_socket
             if sock:
+
 
                 # JSON Objekt erstellen
                 sock.send(message)
