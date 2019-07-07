@@ -30,6 +30,7 @@ def main():
             time.sleep(0.5)
 
 
+
 def discover_devices(ssdp_adress, ssdp_port):
     """
     Diese Funktion sucht das Netzwerk nach Yeelight-Geräten ab. Für jedes gefundene Gerät wird ein
