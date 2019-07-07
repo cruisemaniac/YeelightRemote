@@ -1,6 +1,7 @@
 import socket
 from Command import Command
 
+
 class Device:
 
     def __init__(self, device_id, location, model):
@@ -8,6 +9,7 @@ class Device:
         self.location = location  # Location ist die Adresse der Lampe im Netzwerk
         self.model = model  # Model ist die Art der Lampe: Es gibt: color, desklamp
         self.display_name = ""  # Anzeigename in der GUI-Anwendung
+        self.command = None
         self.tcp_socket = None
 
     def __str__(self):
@@ -50,15 +52,15 @@ class Device:
         except Exception as ex:
             print(f"Fehler beim Schließen der TCP-Verbindung. Exception={ex}")
 
-    def send_command(self, command):
+    def set_command(self, method_name, param_list):
+        self.command = Command(method=method_name, parameters=param_list).get_json()
+
+    def execute_command(self):
         try:
             sock = self.tcp_socket
             if sock:
-
-
-                # JSON Objekt erstellen
-                sock.send(message)
-
+                if self.validate_json(self.command):
+                    self.execute_command()
                 try:
                     answer = s.recv(1024)
                     dec_answer = answer.decode("utf-8")
@@ -69,3 +71,11 @@ class Device:
 
         except Exception as ex:
             print(f"Fehler beim Senden der Nachricht über TCP. Exception={ex}")
+
+    def validate_json(data):
+        try:
+            json.loads(data)
+            return True
+        except ValueError as error:
+            print(f"invalid json: {error}")
+            return False

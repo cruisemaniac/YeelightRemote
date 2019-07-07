@@ -2,6 +2,7 @@ import socket
 import struct
 import sys
 import time
+import uuid
 from Device import Device
 from Command import Command
 
@@ -10,7 +11,7 @@ def main():
 
     # Beispielhafte Nutzung eines Commands
     test_command = Command(cmd_id=1, method="set_power", parameters=["on", "smooth", 500])
-    test_command.create_json()
+    json_command = test_command.create_json()
 
 
     print("Suche wird gestartet.")
