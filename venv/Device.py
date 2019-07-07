@@ -17,12 +17,14 @@ class Device:
 
     def get_adress(self):
         try:
-            return self.location
+            adress = self.location
+            (ip, port) = adress.strip().replace("yeelight://", "").split(":")
+            return (ip, port)
         except Exception as ex:
             print(f"Fehler beim Ermitteln der Adresse. Exception:{ex}")
-            return "";
+            return ""
 
-    def establish_tcp_connection(self, message):
+    def connect(self):
         try:
             (ip, port) = self.get_adress()
             print(f"Verbindungsaufsbau zu {ip}:{port}")
@@ -30,15 +32,29 @@ class Device:
             sock = self.tcp_socket
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.settimeout(1)
-            sock.connect((ip, port))
+            sock.connect((ip, int(port)))
+
+            print("Verbindung erfolgreich aufgebaut!")
 
         except Exception as ex:
+            if sock:
+                sock.close()
             print(f"Fehler beim Aufbau der TCP Verbindung. Exception={ex}")
 
-    def send_command(self, command):
+    def disconnect(self):
+        try:
+            if self.tcp_socket:
+                self.tcp_socket.close()
+                print("TCP-Verbindung erfolgreich geschlossen.")
+        except Exception as ex:
+            print(f"Fehler beim Schließen der TCP-Verbindung. Exception={ex}")
+
+    def send_command(self, id, method, params):
         try:
             sock = self.tcp_socket
             if sock:
+
+                # JSON Objekt erstellen
                 sock.send(message)
 
                 try:

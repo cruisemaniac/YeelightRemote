@@ -13,6 +13,13 @@ def main():
     if discoverd_devices is not None and len(discoverd_devices) > 0:
         for dev in discoverd_devices:
             print(dev)
+            dev.connect()
+            time.sleep(0.5)
+
+    if discoverd_devices is not None and len(discoverd_devices) > 0:
+        for dev in discoverd_devices:
+            dev.disconnect()
+            time.sleep(0.5)
 
 
 def discover_devices(ssdp_adress, ssdp_port):
