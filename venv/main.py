@@ -4,31 +4,24 @@ import sys
 import time
 import uuid
 from Device import Device
-from Command import Command
+from Command import CommandHelper
 
 
 def main():
+    try:
+        print("Suche gestartet.")
+        devices = discover_devices(ssdp_adress="239.255.255.250", ssdp_port=1982)
+        print("Suche abgeschlossen.")
 
-    # Beispielhafte Nutzung eines Commands
-    test_command = Command(cmd_id=1, method="set_power", parameters=["on", "smooth", 500])
-    json_command = test_command.create_json()
+        ex_command = CommandHelper()
 
+        for device in devices:
+            if device:
+                device.set_command(ex_command.set_power(turn_on=True))
+                device.execute_command()
 
-    print("Suche wird gestartet.")
-    # discoverd_devices = discover_devices(ssdp_adress="239.255.255.250", ssdp_port=1982)
-    print("Suche abgeschlossen. Diese Geräte wurden entdeckt: ")
-
-    if discoverd_devices is not None and len(discoverd_devices) > 0:
-        for dev in discoverd_devices:
-            print(dev)
-            dev.connect()
-            time.sleep(0.5)
-
-    if discoverd_devices is not None and len(discoverd_devices) > 0:
-        for dev in discoverd_devices:
-            dev.disconnect()
-            time.sleep(0.5)
-
+    except Exception as ex:
+        print(f"Fehler beim Ablauf des Programms. Exception={ex}")
 
 
 def discover_devices(ssdp_adress, ssdp_port):
@@ -47,9 +40,10 @@ def discover_devices(ssdp_adress, ssdp_port):
                       f"HOST: {ssdp_adress}:{ssdp_port}\r\n" + \
                       "MAN: \"ssdp:discover\"\r\n" + \
                       "ST: wifi_bulb\r\n"
+        # Mit socket.SOCK_DGRAM sagen wir der Socket, dass es das UDP-Protokoll benutzen soll.
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.sendto(ssdp_request.encode('utf-8'), (ssdp_adress, ssdp_port))
-        sock.settimeout(1)
+        sock.settimeout(3)
         time.sleep(1)
 
         while True:
@@ -57,18 +51,20 @@ def discover_devices(ssdp_adress, ssdp_port):
                 answer = sock.recv(1024)  # 1024 Bytes lesen
             except socket.timeout:
                 print(f"Timeout des Sockets nach {sock.gettimeout()}s. Es wird angenommen dass keine Daten mehr zu empfangen sind.")
-                break;
+                break
 
             device_infolist = parse_ssdp_answer(answer, debug=False)
             device = create_device(device_infolist)
 
+            # Falls es das Device schon einmal gibt, soll es nicht zur Liste hinzugefügt werden.
+            # Identifikation mit der einmaligen ID der Yeelight Birne.
             if device and device_is_unique(device, devices):
                 devices.append(device)
+                print(f"Gerät gefunden: {device}")
 
+            # Falls eine leere Antwort zurückkommt, wissen wir dass wir alle Geräte gefunden haben.
             if not answer:
                 break
-            answer = None
-            device = None
 
         return devices
     except Exception as ex:
@@ -95,14 +91,26 @@ def parse_ssdp_answer(answer, debug):
 def create_device(device_info):
     if device_info:
         try:
-            location = device_info[4][10:]
-            id = device_info[6][4:]
+            # Wir können hier feste Werte benutzen, da die SSDP Antwort standardisiert ist, und immmer den gleichen
+            # Text zurückgibt.
+            (ip, port) = get_adress(device_info[4][10:])
+            device_id = device_info[6][4:]
             model = device_info[7][7:]
-            device = Device(device_id=id, location=location, model=model)
-            return device
+
+            return Device(device_id=device_id, ip=ip, port=int(port), model=model)
         except Exception as ex:
-            print(f"Fehler bei Erstellung des Geräts(id={id} | location={location} | model={model}. Exception={ex}")
+            print(f"Fehler bei Erstellung des Geräts(id={id} | location={ip}:{port} | model={model}. Exception={ex}")
             return None
+
+
+def get_adress(location):
+    try:
+        (ip, port) = location.strip().replace("yeelight://", "").split(":")
+        return ip, port
+    except Exception as ex:
+        print(f"Fehler beim Ermitteln der Adresse. Exception:{ex}")
+        return ""
+
 
 # Anhand der ID überprüfen ob es das Device schon gibt.
 def device_is_unique(current_device, device_list):
@@ -114,6 +122,7 @@ def device_is_unique(current_device, device_list):
         return True
     except Exception as ex:
         print(f"Fehler beim prüfen ob das Device schon gefunden wurde. Exception={ex}")
+
 
 if __name__ == '__main__':
     main()

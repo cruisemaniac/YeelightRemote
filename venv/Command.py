@@ -1,21 +1,32 @@
 import json
+import uuid
+from random import randint
 
 
-class Command:
+class CommandHelper:
 
-    def __init__(self, method, parameters):
-        self.cmd_id = uuid.uuid4().int
-        self.method = method
-        if parameters:
-            self.parameters = parameters
+    def __init__(self):
+        self.cmd_id = uuid.uuid4().int % randint(13, 97)
+
+    def set_power(self, turn_on):
+        if turn_on:
+            on_off = "on"
         else:
-            self.parameters = list() # Leere Liste erstellen falls keine Parameter geliefert werden.
+            on_off = "off"
 
-    @cmd_id
-    def cmd_id(self):
-        return cmd_id
+        # effect = immer auf smooth, weil es so besser aussieht. 500 ist die Zeit in ms für den Übergang
+        json_command = json.dumps({"id": self.cmd_id, "method": "set_power", "params": [on_off, "smooth", 500]})
+        print(json_command)
+        return json_command
 
-    def get_json(self):
-        json_data = json.dumps({"id": self.cmd_id, "method": self.method, "params": self.parameters})
-        print(json_data)
-        return "json_data"
+    def toggle_power(self):
+        print("NOCH NICHT IMPLEMENTIERT")
+
+    def set_color(self):
+        print("NOCH NICHT IMPLEMENTIERT")
+
+    def set_warmth(self):
+        print("NOCH NICHT IMPLEMENTIERT")
+
+    def set_name(self):
+        print("NOCH NICHT IMPLEMENTIERT")

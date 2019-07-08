@@ -14,12 +14,10 @@ class MainConfig:
             # In dieser Methode soll diese Klasse als XML gespeichert werden.
             print(f"Fehler beim Speichern der MainConfig: Exception={ex}")
 
-
     def laod(self):
         try:
             # In dieser Methode soll diese Klasse von einem XML geladen werden.
             print("MainConfig wird geladen!")
-
         except Exception as ex:
             print(f"Fehler beim Speichern der MainConfig: Exception={ex}")
 
