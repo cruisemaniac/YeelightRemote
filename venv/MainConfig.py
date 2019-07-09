@@ -1,23 +1,40 @@
-# Eine Klasse
+import pickle
+import os.path
+
+"""
+Diese Klasse dient zum Speichern und Auslsen von der Yeelight Konfiguartionsdatei.
+Die Konfiguartionsdatei wird als Binärdaten gespeichert und gelesen.
+"""
 
 
 class MainConfig:
 
     def __init__(self):
-        self.device_list = None
+        self.devices = None
 
     def save(self):
         try:
-            print("MainConfig wird gespeichert!")
-
+            file = open("yeelight.cfg", "wb")
+            pickle.dump(self.devices, file)
+            print("Geräte wurden gespeichert!")
         except Exception as ex:
-            # In dieser Methode soll diese Klasse als XML gespeichert werden.
-            print(f"Fehler beim Speichern der MainConfig: Exception={ex}")
+            # In dieser Methode soll diese Klasse als Datei gespeichert werden.
+            print(f"Fehler beim Speichern der Geräte: Exception={ex}")
+        finally:
+            if file:
+                file.close()
 
-    def laod(self):
+    def load(self):
         try:
-            # In dieser Methode soll diese Klasse von einem XML geladen werden.
-            print("MainConfig wird geladen!")
+            if os.path.isfile("yeelight.cfg"):
+                file = open("yeelight.cfg", "rb")
+                self.devices = pickle.load(file)
+                print("Geräte wurden geladen!")
+            else:
+                print("Keine Config-Datei gefunden. Keine Geräte geladen.")
         except Exception as ex:
-            print(f"Fehler beim Speichern der MainConfig: Exception={ex}")
+            print(f"Fehler beim Laden der Geräte: Exception={ex}")
+        finally:
+            if file:
+                file.close()
 

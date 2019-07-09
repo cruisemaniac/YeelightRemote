@@ -2,6 +2,19 @@ import json
 import uuid
 from random import randint
 
+"""
+Diese Klasse dient als Wrapper für die Befehle die wir an eine Lampe schicken können.
+Hier werden die Befehle erstellt und als JSON geparsed, um dann dem Device-Objekt übergeben zu werden,
+welches diese Befehle dann an die entsprechende Lampe schickt.
+
+Momentan unterstütze Befehle:
+ - set_power: Lampe an-/ausstellen
+ - toggle_power: Den Zustand der Lampe umstellen
+ - set_color: Die RGB-Farbe der Lampe einstellen
+ - set_brightness: Helligkeit einstellen
+ - set_color_temperature: Für Weißlicht können Temperaturen zwischen 1700 und 6500k eingestellt werden
+"""
+
 
 class CommandHelper:
 
@@ -14,14 +27,14 @@ class CommandHelper:
         else:
             on_off = "off"
 
-        get_new_uuid()
+        self.get_new_uuid()
         # effect = immer auf smooth, weil es so besser aussieht. 500 ist die Zeit in ms für den Übergang
         json_command = json.dumps({"id": self.cmd_id, "method": "set_power", "params": [on_off, "smooth", 500]})
         print(json_command)
         return json_command
 
     def toggle_power(self):
-        get_new_uuid()
+        self.get_new_uuid()
         json_command = json.dumps({"id": self.cmd_id, "method": "toggle", "params": []})
         print(json_command)
         return json_command
@@ -33,7 +46,7 @@ class CommandHelper:
             if rgb_color < 0:
                 rgb_color = 0
 
-            get_new_uuid()
+            self.get_new_uuid()
             json_command = json.dumps({"id": self.cmd_id, "method": "set_rgb", "params": [rgb_color, "smooth", 500]})
             print(json_command)
             return json_command
@@ -51,7 +64,7 @@ class CommandHelper:
                 brightness = 1
                 print(f"Gegebener Wert war zu groß. Wert wurde auf {brightness} korrigiert")
 
-            get_new_uuid()
+            self.get_new_uuid()
             json_command = json.dumps({"id": self.cmd_id, "method": "set_bright", "params": [brightness, "smooth", 500]})
             print(json_command)
             return json_command
@@ -68,7 +81,7 @@ class CommandHelper:
                 temperature = 1700
                 print(f"Gegebener Wert war zu groß. Wert wurde auf {temperature} korrigiert")
 
-            get_new_uuid()
+            self.get_new_uuid()
             json_command = json.dumps({"id": self.cmd_id, "method": "set_ct_abx", "params": [temperature, "smooth", 500]})
             print(json_command)
             return json_command

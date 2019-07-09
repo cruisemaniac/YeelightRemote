@@ -1,6 +1,12 @@
 import socket
 from Command import CommandHelper
 
+"""
+Diese Klasse repräsentiert eine Yeelight Smartphone Lampe. In dieser Klasse speichern die jeweiligen Lampen
+ihrem Namen, IP, Port, den Typen und viele weitere Sachen. Mit Hilfe von connect() und disconnect() kann
+sich mit der Lampe verbunden werden um einen Befehl zu schicken.
+"""
+
 
 class Device:
 

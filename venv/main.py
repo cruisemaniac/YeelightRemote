@@ -5,7 +5,8 @@ import time
 import uuid
 from Device import Device
 from Command import CommandHelper
-from PyQt5.QtWidgets import QApplication, QLabel
+from MainConfig import MainConfig
+from PyQt5.QtGui import *
 
 
 def main():
@@ -14,11 +15,15 @@ def main():
         devices = discover_devices(ssdp_adress="239.255.255.250", ssdp_port=1982)
         print("Suche abgeschlossen.")
 
+        maincfg = MainConfig()
+        maincfg.devices = devices
+        maincfg.load()
+
         ex_command = CommandHelper()
 
         for device in devices:
             if device:
-                device.set_command(ex_command.set_power(turn_on=True))
+                device.set_command(ex_command.toggle_power())
                 device.execute_command()
 
     except Exception as ex:
