@@ -8,13 +8,6 @@ from Command import CommandHelper
 from PyQt5.QtWidgets import QApplication, QLabel
 
 
-def qt_test():
-    app = QApplication([])  # [] = Command Line Arguments
-    label = QLabel('Hello World!')
-    label.show()
-    app.exec_()
-
-
 def main():
     try:
         print("Suche gestartet.")
