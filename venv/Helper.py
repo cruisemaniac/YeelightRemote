@@ -19,6 +19,7 @@ class Helper:
         :return Liste von Yeelight-Geräten.
         """
 
+        print("Suche gestartet.")
         devices = list()
 
         try:
@@ -59,6 +60,7 @@ class Helper:
         finally:
             if sock:
                 sock.close()
+                print("Suche abgeschlossen.")
 
     def parse_ssdp_answer(self, answer, debug):
         try:

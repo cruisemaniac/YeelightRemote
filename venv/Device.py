@@ -15,7 +15,7 @@ class Device:
         self.ip = ip
         self.port = port
         self.model = model  # Model ist die Art der Lampe: Es gibt: color, desklamp
-        self.display_name = ""  # Anzeigename in der GUI-Anwendung
+        self.display_name = "display_name"  # Anzeigename in der GUI-Anwendung
         self.command = None
         self.tcp_socket = None
 
