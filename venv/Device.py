@@ -14,7 +14,7 @@ class Device:
         self.ip = ip
         self.port = port
         self.model = model  # Model ist die Art der Lampe: Es gibt: color, desklamp
-        self.display_name = "display_name"  # Anzeigename in der GUI-Anwendung
+        self.display_name = ""  # Anzeigename in der GUI-Anwendung
         self.command = None
         self.tcp_socket = None
 
@@ -52,24 +52,12 @@ class Device:
         except Exception as ex:
             print(f"Fehler beim Schließen der TCP-Verbindung. Exception={ex}")
 
-    # Mit Hilfe des CommandHelpers wird ein JSON erstellt, welches hier übergeben wird.
-    def set_command(self, json_command):
-        self.command = json_command
-
-    def update(self):
-        try:
-            if self.tcp_socket:
-                self.tcp_socket.listen()
-
-        except Exception as ex:
-            print(f"Fehler beim Aktualisieren des Status der Birne. Exception={ex}")
-
     # Beim Senden eines Commands wird geschaut ob es 1. einen Command gibt, und 2. das TCP-Socket eine Verbindung hat.
     # Nach jedem Command wird eine Verbindung hergestellt und auch wieder geschlossen.
-    def execute_command(self):
+    def execute_command(self, json_command):
         try:
             sock = self.tcp_socket
-            if not self.command:
+            if not json_command:
                 print("Es gibt keinen Command der ausgeführt werden kann. "
                       "Es ist wohl etwas beim parsen des Befehls scheiefgelaufen")
                 return
@@ -80,7 +68,7 @@ class Device:
                 sock = self.connect()
 
             # Jeder Command muss mit einem Linebreak enden, sonst wird der Command nicht vom Gerät erkannt
-            data = self.command + "\r\n"
+            data = json_command + "\r\n"
             sock.send(bytes(data.encode("ascii")))
         except Exception as ex:
             print(f"Fehler beim Senden der Nachricht über TCP. Exception={ex}")

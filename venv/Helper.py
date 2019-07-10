@@ -36,7 +36,7 @@ class Helper:
                         f"Timeout des Sockets nach {sock.gettimeout()}s. Es wird angenommen dass keine Daten mehr zu empfangen sind.")
                     break
 
-                device_infolist = self.parse_ssdp_answer(answer, debug=False)
+                device_infolist = self.parse_ssdp_answer(answer)
                 device = self.create_device(device_infolist)
 
                 # Falls es das Device schon einmal gibt, soll es nicht zur Liste hinzugefügt werden.
@@ -57,14 +57,11 @@ class Helper:
                 sock.close()
                 print("Suche abgeschlossen.")
 
-    def parse_ssdp_answer(self, answer, debug):
+    def parse_ssdp_answer(self, answer):
         try:
             if answer:
                 answer = answer.decode("utf-8")
                 readable_answer = answer.splitlines()
-            if debug:
-                for line in readable_answer:  # Debug
-                    print(line)
             return readable_answer
         except Exception as ex:
             print(f"Fehler beim Verarbeiten der Antwort auf die SSDP Anfrage. Exception={ex}")

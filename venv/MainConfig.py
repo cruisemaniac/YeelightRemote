@@ -30,10 +30,9 @@ class MainConfig:
                 print("Geräte wurden geladen!")
                 return pickle.load(file)
             else:
-                print("Keine Config-Datei gefunden. Keine Geräte geladen.")
+                print("Keine Konfigurationsdatei gefunden. Keine Geräte geladen.")
         except Exception as ex:
             print(f"Fehler beim Laden der Geräte: Exception={ex}")
         finally:
             if file:
                 file.close()
-
