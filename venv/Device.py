@@ -1,5 +1,4 @@
 import socket
-from Command import CommandHelper
 
 """
 Diese Klasse repräsentiert eine Yeelight Smartphone Lampe. In dieser Klasse speichern die jeweiligen Lampen

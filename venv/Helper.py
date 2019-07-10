@@ -1,11 +1,6 @@
 import socket
-import struct
-import sys
 import time
-import uuid
 from Device import Device
-from Command import CommandHelper
-from MainConfig import MainConfig
 
 
 class Helper:

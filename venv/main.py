@@ -1,25 +1,24 @@
-import socket
-import struct
-import sys
-import time
-import uuid
 from Device import Device
 from Helper import Helper
 from Command import CommandHelper
 from MainConfig import MainConfig
 from tkinter import *
+from tkinter.filedialog import askopenfilename
+import os
 
 # Initialisierung Variablen
 devices = list()
 helper = Helper()
+devices_framelabel = None
 
 
 def main():
     try:
+        global devices_framelabel
         root = Tk()
         root.geometry("600x400")
         root.title("Yeelight Remote")
-        load_button = Button(root, text="Config laden", command=load_config)
+        load_button = Button(root, text="Config laden", command=lambda: load_config(show_dialog=True))
         load_button.pack(anchor="ne", padx=5, pady=5)
 
         discover_button = Button(root, text="Geräte finden", command=discover)
@@ -27,8 +26,8 @@ def main():
         devices_framelabel = LabelFrame(root, text="Geräte")
         devices_framelabel.pack(fill="both", expand="yes", pady=10, padx=10)
 
-        # Config laden
-        load_config()
+        # Config laden, aber automatisch kein Fenster öffnen
+        load_config(show_dialog=False)
 
         root.mainloop()
     except Exception as ex:
@@ -40,16 +39,24 @@ def discover():
     devices = helper.discover_devices(ssdp_adress="239.255.255.250", ssdp_port=1982)
 
 
-def load_config():
+def load_config(show_dialog):
     global devices
     config = MainConfig()
-    devices = config.load()
+    if os.path.isfile("yeelight.cfg"):
+        devices = config.load()
+    else:
+        if show_dialog:
+            config_file = askopenfilename(title="Config-Datei auswählen")
+            if config_file:
+                print(f"Config-Datei ausgewählt: {config_file}")
+                devices = config.load(config_file)
     show_devices()
 
 
 def show_devices():
-    global devices
-    if len(devices) > 0:
+    global devices, devices_framelabel
+
+    if devices and len(devices) > 0:
         i = 0
         for device in devices:
 
@@ -76,6 +83,8 @@ def show_devices():
 
             # Zur nächsten Reihe
             i = i+1
+    else:
+        print("Es können keine Geräte zum Anzeigen gefunden werden.")
 
 
 def clear_devices():

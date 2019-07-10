@@ -9,14 +9,12 @@ Die Konfiguartionsdatei wird als Binärdaten gespeichert und gelesen.
 
 class MainConfig:
 
-    def __init__(self):
-        self.devices = None
-
-    def save(self):
+    def save(self, devices):
         try:
             file = open("yeelight.cfg", "wb")
-            pickle.dump(self.devices, file)
-            print("Geräte wurden gespeichert!")
+            if file:
+                pickle.dump(devices, file)
+                print("Geräte wurden gespeichert!")
         except Exception as ex:
             # In dieser Methode soll diese Klasse als Datei gespeichert werden.
             print(f"Fehler beim Speichern der Geräte: Exception={ex}")
@@ -24,12 +22,13 @@ class MainConfig:
             if file:
                 file.close()
 
-    def load(self):
+    def load(self, alternative_file):
+        file = None
         try:
             if os.path.isfile("yeelight.cfg"):
                 file = open("yeelight.cfg", "rb")
-                self.devices = pickle.load(file)
                 print("Geräte wurden geladen!")
+                return pickle.load(file)
             else:
                 print("Keine Config-Datei gefunden. Keine Geräte geladen.")
         except Exception as ex:
